@@ -24,15 +24,17 @@ public class Deck {
 
 	// http://thefamilypodcastnetwork.com/wp-content/uploads/2014/10/meme-sticker-likeaboss.jpg
 	public void makeDeck(int numberOfDecks) {
-		for (Rank r : Rank.values()){
-			for (Suit s : Suit.values()){
+		for (Rank r : Rank.values()) {
+			for (Suit s : Suit.values()) {
 				deck.add(new Card(r, s));
 			}
 		}
 		numberOfDecks += -1;
-		if (numberOfDecks == 0)return;
+		if (numberOfDecks == 0)
+			return;
 		// Recursion for multiple decks
-		else makeDeck(numberOfDecks);
+		else
+			makeDeck(numberOfDecks);
 	}
 
 	public int getSize() {
@@ -44,11 +46,15 @@ public class Deck {
 		this.deckSize += -1;
 	}
 
+	// Throws and Exception in case there are no more cards.
 	public Card getCard() throws Exception {
-		if (this.deckSize == 0) throw new Exception();
-		Card tempCard = (Card) this.deck.get(0);
-		removeCard();
-		return tempCard;
+		if (this.deckSize != 0) {
+			Card tempCard = (Card) this.deck.get(0);
+			//removeCard();
+			this.deck.remove(0);
+			this.deckSize += -1;
+			return tempCard;
+		} else throw new Exception();
 	}
 
 	// Testing method
@@ -58,4 +64,3 @@ public class Deck {
 		}
 	}
 }
-
