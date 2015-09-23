@@ -47,14 +47,13 @@ public class Deck {
 	}
 
 	// Throws and Exception in case there are no more cards.
-	public Card getCard() throws Exception {
-		if (this.deckSize != 0) {
-			Card tempCard = (Card) this.deck.get(0);
-			//removeCard();
-			this.deck.remove(0);
-			this.deckSize += -1;
-			return tempCard;
-		} else throw new Exception();
+	public Card getCard(){
+		Card tempCard = (Card) this.deck.get(0);
+		// removeCard();
+		this.deck.remove(0);
+		this.deckSize += -1;
+		return tempCard;
+
 	}
 
 	// Testing method

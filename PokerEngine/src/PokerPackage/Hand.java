@@ -16,7 +16,6 @@ public class Hand {
 	private boolean isStraight;
 	private boolean isFlush;
 	private int hasPairValue;
-	@SuppressWarnings("unused")
 	private HandType handType;
 	private ArrayList<Card> hand = new ArrayList<Card>(5);
 	// suitsInHand holds the suit type (Suit key), and the **FREQUENCY** of that
@@ -29,6 +28,7 @@ public class Hand {
 	private Map<Rank, Integer> sortedRankInHand = new TreeMap<Rank, Integer>();
 
 	// This should never be used explicitly
+	@SuppressWarnings("unused")
 	private Hand() {
 	};
 
@@ -40,20 +40,19 @@ public class Hand {
 	 */
 	public Hand(Deck deck) {
 		for (int i = 0; i < 5; i++) {
-			try {
-				Card tempCard = deck.getCard();
-				this.hand.add(tempCard);
 
-				// Lines 76-81 sets private data members
-				determinePairs();
-				determineStraight();
-				determineFlush();
-				determineHighCard();
-				checkHand();
-			} catch (Exception e) {
-				System.out.println("Out offffff cards");
-			}
+			Card tempCard = deck.getCard();
+			this.hand.add(tempCard);
 		}
+		this.initSuitsAndSorted();
+
+		// Lines 76-81 sets private data members
+		determinePairs();
+		determineStraight();
+		determineFlush();
+		determineHighCard();
+
+		checkHand();
 	}
 
 	// Test constructor. USE THIS CONSTRUCTOR IF YOU WANT TO MAKE SURE PRIVATE
@@ -140,7 +139,7 @@ public class Hand {
 		else if (this.sortedRankInHand.containsValue(2))
 			this.hasPairValue = 1;
 		// Shit out of luck
-		else
+		else // if(this.sortedRankInHand.size() == 5);
 			this.hasPairValue = 0;
 	}
 
@@ -151,36 +150,41 @@ public class Hand {
 		if (this.sortedRankInHand.size() != 5) {
 			this.isStraight = false;
 			return;
-		} else {
-			// Need to be able to compare the value at i and i + 1...hence the
-			// array
-			// Since sortedRankInHand is sorted by key ascending, the array will
-			// already be sorted
-			Object[] array = sortedRankInHand.keySet().toArray();
-			// If you have something better to check for ACE and TWO, be my
-			// guest
-			if (array[0] == Rank.TWO && array[1] == Rank.THREE && array[2] == Rank.FOUR && array[3] == Rank.FIVE
-					&& array[4] == Rank.ACE) {
-				this.isStraight = true;
+		}
+		Object[] array = sortedRankInHand.keySet().toArray();
+
+		if (array[0] == Rank.TWO && array[1] == Rank.THREE && array[2] == Rank.FOUR && array[3] == Rank.FIVE
+				&& array[4] == Rank.ACE) {
+			this.isStraight = true;
+			return;
+		}
+
+		// Need to be able to compare the value at i and i + 1...hence the
+		// array
+		// Since sortedRankInHand is sorted by key ascending, the array will
+		// already be sorted
+		// Object[] array = sortedRankInHand.keySet().toArray();
+		// If you have something better to check for ACE and TWO, be my
+		// guest
+		// if (array[0] == Rank.TWO && array[1] == Rank.THREE && array[2] ==
+		// Rank.FOUR && array[3] == Rank.FIVE
+		// && array[4] == Rank.ACE) {
+		// this.isStraight = true;
+		// return;
+		// }
+		// The reason for the minus 1 is because there may be an
+		// ArrayIndexOutOfBounds exception thrown if you go through entire
+		// array.
+		for (int i = 0; i < array.length - 1; i++) {
+			Rank r1 = (Rank) array[i];
+			Rank r2 = (Rank) array[i + 1];
+			System.out.println(r2.getRank() - r1.getRank());
+			if ((r2.getRank() - r1.getRank()) != 1) {
+				this.isStraight = false;
 				return;
 			}
-			// The reason for the minus 1 is because there may be an
-			// ArrayIndexOutOfBounds exception thrown if you go through entire
-			// array.
-			else {
-				for (int i = 0; i < array.length - 1; i++) {
-					Rank r1 = (Rank) array[i];
-					Rank r2 = (Rank) array[i + 1];
-					if (r2.getRank() - r1.getRank() != 1) {
-						this.isStraight = false;
-						return;
-					} else {
-						this.isStraight = true;
-						return;
-					}
-				}
-			}
 		}
+		this.isStraight = true;
 	}
 
 	// Determine high card

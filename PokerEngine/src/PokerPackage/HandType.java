@@ -46,6 +46,7 @@ public enum HandType {
 		int pos = 0;
 		if (handTypeArray.contains(HandType.ROYAL_FLUSH)) pos = handTypeArray.indexOf(HandType.ROYAL_FLUSH);
 		else {
+			System.out.println(handTypeArray);
 			HandType tempHandType = handTypeArray.get(0);
 			for (int i = 0; i < handTypeArray.size(); i++) {
 				if (compare(handTypeArray.get(i), tempHandType) == 1) {
