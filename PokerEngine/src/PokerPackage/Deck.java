@@ -15,6 +15,7 @@ public class Deck {
 
 	public Deck(int numOfDecks) {
 		this.numOfDecks = numOfDecks;
+		// This deck size is the number of cards in the deck
 		this.deckSize = numOfDecks * 52;
 		this.deck = new ArrayList<Card>(this.deckSize);
 		makeDeck(this.numOfDecks);
@@ -41,18 +42,26 @@ public class Deck {
 		return deckSize;
 	}
 
-	public void removeCard() {
-		this.deck.remove(0);
-		this.deckSize += -1;
+	public void removeCard() throws DeckOutOfCardsException {
+		if (this.deckSize > 0) {
+			this.deck.remove(0);
+			this.deckSize += -1;
+		} else {
+			throw new DeckOutOfCardsException();
+		}
 	}
 
 	// Throws and Exception in case there are no more cards.
-	public Card getCard(){
-		Card tempCard = (Card) this.deck.get(0);
-		// removeCard();
-		this.deck.remove(0);
-		this.deckSize += -1;
-		return tempCard;
+	public Card getCard() throws DeckOutOfCardsException{
+		if (this.deckSize > 0){
+			Card tempCard = (Card) this.deck.get(0);
+			// removeCard();
+			this.deck.remove(0);
+			this.deckSize += -1;
+			return tempCard;
+		} else {
+			throw new DeckOutOfCardsException();	
+		}
 
 	}
 
@@ -61,5 +70,10 @@ public class Deck {
 		for (Card c : this.deck) {
 			System.out.println(c);
 		}
+	}
+
+	// To make static or not to make static???
+	public void addNewDeck(int numberOfDecks) {
+		this.makeDeck(numberOfDecks);
 	}
 }

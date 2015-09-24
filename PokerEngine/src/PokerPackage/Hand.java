@@ -12,11 +12,11 @@ import java.util.TreeMap;
  */
 
 public class Hand {
-	private Rank highCard;
 	private boolean isStraight;
 	private boolean isFlush;
 	private int hasPairValue;
 	private HandType handType;
+	private Rank highCardRank;
 	private ArrayList<Card> hand = new ArrayList<Card>(5);
 	// suitsInHand holds the suit type (Suit key), and the **FREQUENCY** of that
 	// suit (Integer value)
@@ -26,6 +26,9 @@ public class Hand {
 	// sortedRankInHand is a TreeMap so that I can have the card ranks
 	// sorted...which makes things easier down the road
 	private Map<Rank, Integer> sortedRankInHand = new TreeMap<Rank, Integer>();
+	
+	// Have ALL the possible kickers in one container. The kickers in the container will be determined by what type of hand you have
+	private ArrayList<Rank> kickerPossibilities = new ArrayList<Rank>();
 
 	// This should never be used explicitly
 	@SuppressWarnings("unused")
@@ -38,21 +41,24 @@ public class Hand {
 	 * NEW hand being created, we do not need to worry about methods that will
 	 * take cards one at a time. This is why the exception is propagated here.
 	 */
-	public Hand(Deck deck) {
-		for (int i = 0; i < 5; i++) {
+	public Hand(Deck deck) throws DeckOutOfCardsException {
+		try {
+			for (int i = 0; i < 5; i++) {
 
-			Card tempCard = deck.getCard();
-			this.hand.add(tempCard);
+				Card tempCard = deck.getCard();
+				this.hand.add(tempCard);
+			}
+			this.initSuitsAndSorted();
+
+			// Lines 76-81 sets private data members
+			determinePairs();
+			determineStraight();
+			determineFlush();
+
+			checkHand();
+		} catch (DeckOutOfCardsException e) {
+			throw new DeckOutOfCardsException();
 		}
-		this.initSuitsAndSorted();
-
-		// Lines 76-81 sets private data members
-		determinePairs();
-		determineStraight();
-		determineFlush();
-		determineHighCard();
-
-		checkHand();
 	}
 
 	// Test constructor. USE THIS CONSTRUCTOR IF YOU WANT TO MAKE SURE PRIVATE
@@ -68,16 +74,8 @@ public class Hand {
 		determinePairs();
 		determineStraight();
 		determineFlush();
-		determineHighCard();
+
 		checkHand();
-	}
-
-	public Rank getHighCard() {
-		return highCard;
-	}
-
-	public void setHighCard(Rank highCard) {
-		this.highCard = highCard;
 	}
 
 	public boolean isFlush() {
@@ -124,8 +122,9 @@ public class Hand {
 	// Tested
 	public void determinePairs() {
 		// Four of a kind
-		if (this.sortedRankInHand.containsValue(4))
+		if (this.sortedRankInHand.containsValue(4)){
 			this.hasPairValue = 5;
+		}
 		// Full house
 		else if (this.sortedRankInHand.containsValue(3) && this.sortedRankInHand.containsValue(2))
 			this.hasPairValue = 4;
@@ -163,15 +162,6 @@ public class Hand {
 		// array
 		// Since sortedRankInHand is sorted by key ascending, the array will
 		// already be sorted
-		// Object[] array = sortedRankInHand.keySet().toArray();
-		// If you have something better to check for ACE and TWO, be my
-		// guest
-		// if (array[0] == Rank.TWO && array[1] == Rank.THREE && array[2] ==
-		// Rank.FOUR && array[3] == Rank.FIVE
-		// && array[4] == Rank.ACE) {
-		// this.isStraight = true;
-		// return;
-		// }
 		// The reason for the minus 1 is because there may be an
 		// ArrayIndexOutOfBounds exception thrown if you go through entire
 		// array.
@@ -187,15 +177,7 @@ public class Hand {
 		this.isStraight = true;
 	}
 
-	// Determine high card
-	// Tested
-	public void determineHighCard() {
-		// As mentioned in the method directly above, the array of the
-		// sortedRankInHand keys will already be sorted, i.e. the highest rank
-		// is in the last position
-		Rank r = (Rank) this.sortedRankInHand.keySet().toArray()[this.sortedRankInHand.size() - 1];
-		this.highCard = r;
-	}
+
 
 	// Determine flush
 	// Tested
@@ -204,6 +186,10 @@ public class Hand {
 			this.isFlush = true;
 		else
 			this.isFlush = false;
+	}
+	
+	public void determineKicker(){
+		
 	}
 
 	// Testing method
@@ -247,17 +233,22 @@ public class Hand {
 		 */
 		// if ()
 		ArrayList<HandType> possibleHands = new ArrayList<>();
+		Rank highCard = (Rank) this.sortedRankInHand.keySet().toArray()[this.sortedRankInHand.size() - 1];
 		// Comparing cards in the players hand to all the types of hands
 		for (HandType ht : HandType.values()) {
 			if (this.isStraight == ht.getStraightValue() && this.isFlush == ht.getFlushValue()
 					&& this.hasPairValue == ht.getPairValue()) {
-				if (ht != HandType.ROYAL_FLUSH || ht != HandType.STRAIGHT_FLUSH)
+				if (ht != HandType.ROYAL_FLUSH || ht != HandType.STRAIGHT_FLUSH){
+					ht.setkickerRankValue(highCard);
 					possibleHands.add(ht);
+				}
 				else {
-					if (this.highCard == Rank.ACE)
+					if (highCard == Rank.ACE)
 						possibleHands.add(HandType.ROYAL_FLUSH);
-					else
+					else{
+						ht.setkickerRankValue(highCard);
 						possibleHands.add(HandType.STRAIGHT_FLUSH);
+					}
 				}
 			}
 		}
