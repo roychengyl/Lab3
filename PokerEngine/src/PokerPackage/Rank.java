@@ -40,6 +40,7 @@ public enum Rank implements Comparator<Rank>{
 		}
 		return 0;
 	}
+	
 	@Override
 	public String toString(){
 		return this.value + "";

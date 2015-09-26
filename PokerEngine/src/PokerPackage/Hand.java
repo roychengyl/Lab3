@@ -125,4 +125,9 @@ public class Hand{
 				sortedRankInHand.put(c.getRank(), 1);
 		}
 	}
+	
+	@Override
+	public String toString(){
+		return this.hand + "  ";
+	}
 }
