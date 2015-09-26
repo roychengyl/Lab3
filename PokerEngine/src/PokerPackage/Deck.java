@@ -3,6 +3,16 @@ package PokerPackage;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * @author Moheem Ilyas
+ * 
+ * Created:				9/19/2015
+ * Last Modified:		9/25/2015
+ * Description:			This class defines what a normal deck of cards consist of. 
+ * Assignment:          Lab 2
+ *
+ */
+
 public class Deck {
 	private int deckSize = 52;
 	private ArrayList<Card> deck;
@@ -13,6 +23,10 @@ public class Deck {
 		this(1);
 	}
 
+	/*
+	 * This is the primary constructor. It does not actually make the deck. It just serves to determine the size of the deck 
+	 * and make the ArrayList of type Card for the deck object.
+	 */
 	public Deck(int numOfDecks) {
 		this.numOfDecks = numOfDecks;
 		// This deck size is the number of cards in the deck
@@ -23,6 +37,10 @@ public class Deck {
 		Collections.shuffle(this.deck);
 	}
 
+	/*
+	 * This method actually creates the deck. The nested for loop will always result in the creation of 52 cards...
+	 * so we only need the deck size for the recursive call for multiple deck
+	 */
 	// http://thefamilypodcastnetwork.com/wp-content/uploads/2014/10/meme-sticker-likeaboss.jpg
 	public void makeDeck(int numberOfDecks) {
 		for (Rank r : Rank.values()) {
@@ -42,16 +60,9 @@ public class Deck {
 		return deckSize;
 	}
 
-	public void removeCard() throws DeckOutOfCardsException {
-		if (this.deckSize > 0) {
-			this.deck.remove(0);
-			this.deckSize += -1;
-		} else {
-			throw new DeckOutOfCardsException();
-		}
-	}
-
-	// Throws and Exception in case there are no more cards.
+	/*
+	 * This method gets the first card in the ArrayList of type Card (as well as removes it from the ArrayList this.deck).
+	 */
 	public Card getCard() throws DeckOutOfCardsException{
 		if (this.deckSize > 0){
 			Card tempCard = (Card) this.deck.get(0);
@@ -72,7 +83,7 @@ public class Deck {
 		}
 	}
 
-	// To make static or not to make static???
+	// This method has not yet been incorporated for the rest of the code, but I thought it could be useful for future error handling endeavors.
 	public void addNewDeck(int numberOfDecks) {
 		this.makeDeck(numberOfDecks);
 	}

@@ -6,20 +6,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-/*
+/**
+ * @author Moheem Ilyas
+ * Created:				9/19/2015
+ * Last Modified:		9/25/2015
+ * Description:			This class specifies what a hand is. It will NOT evaluate itself, but instead know what its kickers are, how many
+ * 						of each Suit there is, and how many of each Rank there is.  
+ * Assignment:          Lab 2
+ * 
  * TO TEST determine<INSERT CASE HERE> METHODS, CREATE TEST CONSTRUCTORS THAT WILL EXPLICITY CREATE A CERTAIN TYPE OF HAND, E.G. FLUSH, STRAIGHT ETC..
  * 
  */
 
 public class Hand{
-	//private boolean isStraight;
-	//private boolean isFlush;
-	//private int hasPairValue;
+
 	private HandType handType;
-	//private Rank highCardRank;
 	private ArrayList<Card> hand = new ArrayList<Card>(5);
 	// suitsInHand holds the suit type (Suit key), and the **FREQUENCY** of that
-	// suit (Integer value)
 	private Map<Suit, Integer> suitsInHand = new HashMap<Suit, Integer>();
 	// sortedRankInHand holds the ranks (Key) (Ace, two, three...) and the
 	// **FREQUENCY** (Integer value) of that rank.
@@ -27,9 +30,9 @@ public class Hand{
 	// sorted...which makes things easier down the road
 	private TreeMap<Rank, Integer> sortedRankInHand = new TreeMap<Rank, Integer>();
 	
-	// Have ALL the possible kickers in one container. The kickers in the container will be determined by what type of hand you have
+	// Have ALL the possible kickers in one container. The kickers in the container will be determined by what type of hand you have.
 	// The reason why kickerPossibilities is in this class instead of HandType (so it could be like, flush + kickerPossibilities) is 
-	// 	because I wanted to use the HandType of the Hand to determine how I should take my kickers.
+	// 	because I wanted to use the HandType of the Hand to determine what I should have as my kickers.
 	private List<Rank> kickerPossibilities = new ArrayList<Rank>();
 
 	// This should never be used explicitly
@@ -37,11 +40,9 @@ public class Hand{
 	private Hand() {
 	};
 
-	/*
-	 * This is the constructor that should mainly be used. Since it is assumed
-	 * that a new card from a deck will be drawn only when there is a COMPLETELY
-	 * NEW hand being created, we do not need to worry about methods that will
-	 * take cards one at a time. This is why the exception is propagated here.
+	/** 
+	 * @author Moheem Ilyas
+	 * This is the constructor that should mainly be used.
 	 */
 	public Hand(Deck deck) throws DeckOutOfCardsException {
 		try {
@@ -108,7 +109,10 @@ public class Hand{
 		System.out.println(this.sortedRankInHand);
 	}
 
-	// Initializes suitsInHand and sortedRankInHand
+	/**
+	 * @author Moheem Ilyas
+	 * Desctiption: The purpose of this method is to get the frequency of a suit and a Rank for a Hand.
+	 */
 	public void initSuitsAndSorted() {
 		for (Card c : this.hand) {
 			if (suitsInHand.containsKey(c.getSuit())) {

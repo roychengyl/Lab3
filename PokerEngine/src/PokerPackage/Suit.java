@@ -1,5 +1,11 @@
 package PokerPackage;
 
+/**
+ * 
+ * @author Moheem Ilyas
+ *
+ */
+
 public enum Suit {
 	HEART("heart"), SPADE("spade"), CLUB("club"), DIAMOND("diamond");
 	private String s;

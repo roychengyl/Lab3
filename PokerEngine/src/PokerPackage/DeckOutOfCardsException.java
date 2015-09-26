@@ -1,5 +1,11 @@
 package PokerPackage;
 
+/**
+ * 
+ * @author Moheem Ilyas
+ *
+ */
+
 public class DeckOutOfCardsException extends Exception{
 	
 	

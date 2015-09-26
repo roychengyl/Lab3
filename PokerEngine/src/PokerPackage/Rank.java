@@ -4,6 +4,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+
+/**
+ * 
+ * @author Moheem Ilyas
+ *
+ */
+
 // Note to self, when trying to change values, remember that they ARE STORED IN SAME MEMORY LOCATION!!!!
 public enum Rank implements Comparator<Rank>{
 	TWO(2), THREE(3), FOUR(4), FIVE(5),

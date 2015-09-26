@@ -1,4 +1,11 @@
 package PokerPackage;
+
+/**
+ * 
+ * @author Moheem Ilyas
+ * 
+ *
+ */
 public class Card{
 	private Rank rank;
 	private Suit suit;
@@ -8,7 +15,6 @@ public class Card{
 	}
 	
 	public Card(Rank r, Suit s) {
-		// TODO Auto-generated constructor stub
 		this.rank = r;
 		this.suit = s;
 	}
