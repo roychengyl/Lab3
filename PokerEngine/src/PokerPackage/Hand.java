@@ -95,6 +95,11 @@ public class Hand{
 	public void setKickerPossibilities(List<Rank> kickers){
 		this.kickerPossibilities = kickers;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public ArrayList getHand(){
+		return this.hand;
+	}
 
 	// Testing method
 	public void printHand() {

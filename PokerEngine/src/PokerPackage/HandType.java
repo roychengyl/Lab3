@@ -8,7 +8,7 @@ import java.util.List;
  * 
  * @author Moheem Ilyas
  * * Created:			9/19/2015
- * Last Modified:		9/25/2015
+ * Last Modified:		10/11/2015
  * Description:			This class contains the blueprint for each type of hand. The responsibility for making any sort of an evaluation
  * 						for a hand should fall to this object. Even evaluating multiple hands should be done here, since you are ultimately 
  * 						evaluating hand types. 
@@ -20,9 +20,9 @@ public enum HandType{
 	// This first parameter is rankValue (which hand is better than the other), second is pairValue, third is
 	// straight, fourth is flush
 	NO_PAIR(0, 0, false, false), ONE_PAIR(1, 1, false, false), TWO_PAIR(2, 2, false, false), THREE_OF_A_KIND(3, 3,
-			false, false), STRAIGHT(4, 0, true, false), FLUSH(5, 0, false, true), FULL_HOUSE(6, 4, false,
-					false), FOUR_OF_A_KIND(7, 5, false, false), STRAIGHT_FLUSH(8, 0, true, true), ROYAL_FLUSH(9, 0,
-							true, true);
+			false, false), STRAIGHT(4, -1, true, false), FLUSH(5, -1, false, true), FULL_HOUSE(6, 4, false,
+					false), FOUR_OF_A_KIND(7, 5, false, false), STRAIGHT_FLUSH(8, -1, true, true), ROYAL_FLUSH(9, -1,
+							true, true); //JOKER(100, 0, false, false);
 
 	private int rankValue;
 	private int pairValue;
@@ -153,19 +153,19 @@ public enum HandType{
 	public static List<Rank> determineKickerPossibilities(HandType handType, Hand hand){
 		List<Rank> kickerPossibilities = new ArrayList<Rank>();
 		 
-		if (handType == HandType.NO_PAIR){
+		/*if (handType == HandType.NO_PAIR){
 			for (Object r : hand.getSortedVals().keySet().toArray()){
 				Rank rank = (Rank) r;
 				kickerPossibilities.add(rank);
 			}
-		}
-		// ...Nice or statment
-		else if (handType == HandType.ONE_PAIR || handType == HandType.TWO_PAIR || handType == HandType.THREE_OF_A_KIND || handType == HandType.FOUR_OF_A_KIND){
+		}*/
+		// ...Nice or statement
+		if (handType == HandType.ONE_PAIR || handType == HandType.TWO_PAIR || handType == HandType.THREE_OF_A_KIND || handType == HandType.FOUR_OF_A_KIND){
 			for (Object r : hand.getSortedVals().keySet().toArray()){
 				Rank rank = (Rank) r;
-				// Using .equals because the value for the key is an OBJECT Integer
 				if (hand.getSortedVals().get(rank).equals(1))
 					kickerPossibilities.add(rank);
+				//kickerPossibilities.add(rank);
 			}
 		}
 		
@@ -226,7 +226,23 @@ public enum HandType{
 		Rank highCard = (Rank) hand.getSortedVals().keySet().toArray()[hand.getSortedVals().size() - 1];
 		Rank lowCard = (Rank) hand.getSortedVals().keySet().toArray()[0];
 		// Comparing cards in the players hand to see if they match any of the enum HandType.
-		for (HandType ht : HandType.values()) {
+		if (determineFlush(hand)){
+			if (determineStraight(hand)){
+				if (highCard == Rank.ACE && lowCard == Rank.TEN)
+					possibleHands.add(HandType.ROYAL_FLUSH);
+				else
+					possibleHands.add(HandType.STRAIGHT_FLUSH);
+			}
+			else possibleHands.add(HandType.FLUSH);
+		}
+		else if (determineStraight(hand)){possibleHands.add(HandType.STRAIGHT);}
+		else {
+			for (HandType ht : HandType.values()){
+				if (determinePairs(hand) == ht.pairValue)
+					possibleHands.add(ht);
+			}
+		}
+		/*for (HandType ht : HandType.values()) {
 			if (determineStraight(hand) == ht.getStraightValue() && determineFlush(hand) == ht.getFlushValue()
 					&& determinePairs(hand) == ht.getPairValue()) {
 				if (ht != HandType.ROYAL_FLUSH && ht != HandType.STRAIGHT_FLUSH){
@@ -241,8 +257,12 @@ public enum HandType{
 				}
 			}
 		}
+		}*/
 		judgeHand(possibleHands);
-		HandType bestHandType = possibleHands.get(possibleHands.size()-1);
+		HandType bestHandType;
+		//possibleHands.
+		//if (possibleHands.size() == 1) bestHandType = possibleHands.get(0);
+		bestHandType = possibleHands.get(possibleHands.size()-1);
 		List<Rank> kickerPossibilities = determineKickerPossibilities(bestHandType, hand);
 		hand.setHandType(bestHandType);
 		hand.setKickerPossibilities(kickerPossibilities);
@@ -260,12 +280,13 @@ public enum HandType{
 	 */
 	public static ArrayList<Integer> judgeHands(List<Hand> hands) {
 		List<HandType> sortedHandTypes = new ArrayList<HandType>();
-		List<List<Rank>> sortedKickerHands = new ArrayList<List<Rank>>();
+		//Map<Integer, List<Rank>> sortedKickerHands = new HashMap<Integer, List<Rank>>();
 		ArrayList<Integer> bestHandPositions = new ArrayList<Integer>();
+		
 		for (Hand h : hands){
 			sortedHandTypes.add(h.getHandType());
 			// The position of each kicker in this list corresponds to the 
-			sortedKickerHands.add(h.getKickerPossibilities());
+			//sortedKickerHands.add(h.getKickerPossibilities());
 		}
 		// Sorting to get the best hand type to the end
 		Collections.sort(sortedHandTypes);
@@ -274,22 +295,46 @@ public enum HandType{
 			// the ended of sortedHandTypes (because that will be the best hand.)
 			if (hands.get(i).getHandType().equals(sortedHandTypes.get(sortedHandTypes.size() - 1)))
 				bestHandPositions.add(i);
-			else{
-				// hands.get(i).getKickerPossibilities() gets the kicker possibilities of the hand because
-				// the hand in this iteration does not match the best HandType...use that to find the index of the
-				// kicker array that needs to be removed.
-				sortedKickerHands.remove(sortedKickerHands.indexOf(hands.get(i).getKickerPossibilities()));
-			}
 		}
 		if (bestHandPositions.size() > 1){
-			for (int i = 0; i < sortedKickerHands.size() - 1; i++){
-				if (Rank.compareRank(sortedKickerHands.get(i), sortedKickerHands.get(i + 1)) == 1) {
-					bestHandPositions.remove(i + 1);
+			ArrayList<Integer> greaterKickerHands = new ArrayList<>();
+			for (int m : bestHandPositions) greaterKickerHands.add(m);
+			int j = 1;
+			for (int i = 0; i < bestHandPositions.size(); i++){
+				if (Rank.compareRank(hands.get(bestHandPositions.get(i)).getKickerPossibilities(),
+						hands.get(bestHandPositions.get(j)).getKickerPossibilities()) > 0){
+					greaterKickerHands.clear();
+					greaterKickerHands.add(bestHandPositions.get(i));
+					j = i;
 				}
-				else if (Rank.compareRank(sortedKickerHands.get(i), sortedKickerHands.get(i + 1)) == -1){
+				else if (Rank.compareRank(hands.get(bestHandPositions.get(i)).getKickerPossibilities(),
+						hands.get(bestHandPositions.get(j)).getKickerPossibilities()) < 0){
+					greaterKickerHands.clear();
+					greaterKickerHands.add(bestHandPositions.get(j));
+				}
+				else if (Rank.compareRank(hands.get(bestHandPositions.get(i)).getKickerPossibilities(),
+						hands.get(bestHandPositions.get(j)).getKickerPossibilities()) == 0){
+							greaterKickerHands.clear();
+							greaterKickerHands.add(bestHandPositions.get(i));
+							greaterKickerHands.add(bestHandPositions.get(j));
+							
+						}
+			}
+			/*for (int i = 0; i < sortedKickerHands.size() - 1; i++){
+				
+				if (Rank.compareRank(sortedKickerHands.get(i), sortedKickerHands.get(i + 1)) < 0){
 					bestHandPositions.remove(i);
 				}
-			}
+				else if (Rank.compareRank(sortedKickerHands.get(i), sortedKickerHands.get(i + 1)) > 0) {
+					try {
+					bestHandPositions.remove(i + 1);
+					} catch (IndexOutOfBoundsException e){
+						bestHandPositions.remove(bestHandPositions.size()-1);
+					}
+				}
+				
+			}*/
+			return greaterKickerHands;
 		}
 		return bestHandPositions;
 	}
@@ -298,5 +343,18 @@ public enum HandType{
 	public static void judgeHand(List<HandType> handTypeArray) {
 		Collections.sort(handTypeArray);
 	}
+	
+	/*public static void handleJokers(Hand hand){
+		List combinations = new ArrayList<Hand>();
+		for(Object c : hand.getHand()){
+			Card card = (Card) c;
+			if (c != HandType.JOKER){
+				combination.add(card);
+			}
+			else {
+				for
+			}
+		}
+	}*/
 	
 }
