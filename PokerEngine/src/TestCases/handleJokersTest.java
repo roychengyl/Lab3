@@ -21,7 +21,7 @@ public class handleJokersTest {
 	private static Card c10 = new Card(Rank.THREE, Suit.CLUB);
 	private static Card c11 = new Card(Rank.ACE, Suit.CLUB);
 	private static Card c12 = new Card(Rank.SEVEN, Suit.CLUB);
-	private static Card c13 = new Card(Rank.SIX, Suit.SPADE);
+	private static Card c13 = new Card(Rank.JOKER);
 	private static Card c14 = new Card(Rank.JOKER);
 	private static Hand hand1 = new Hand(c10,c11,c12,c13,c14);
 	private static List<Hand> handCombos = new ArrayList<Hand>();

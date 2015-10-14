@@ -147,14 +147,6 @@ public class Hand {
 		// Hand tempHand = new Hand();
 		int numOfJokers = 0;
 		List<Card> allCards = new ArrayList<Card>();
-		for (Rank rank : Rank.values()) {
-			if (rank != Rank.JOKER) {
-				for (Suit suit : Suit.values()) {
-					Card tempCard = new Card(rank, suit);
-					allCards.add(tempCard);
-				}
-			}
-		}
 		for (Card c : hand) {
 			if (c.getRank() == Rank.JOKER) {
 				++numOfJokers;
@@ -174,20 +166,36 @@ public class Hand {
 
 		// if (numOfJokers > 0) {
 		int nextIndex = 0;
+		int numOfJokersCopy = numOfJokers;
 		do {
 			int i = 0;
 			int pos = positions.get(nextIndex);
 			int curIndex = positions.indexOf(pos);
-			for (int j = 0; j < Math.pow(52.0, curIndex + 1); j++) {
-				//for (int i = 0; i < allCards.size(); i++) {
-					combinations.get(j).getHand().set(pos, allCards.get(i));
-					++i;
-					if (i == 52){i = 0;}
-				//}
+			allCards.clear();
+
+			for (Rank rank : Rank.values()) {
+				if (rank != Rank.JOKER) {
+					for (Suit suit : Suit.values()) {
+						Card tempCard = new Card(rank, suit);
+						for (int m = 0; m < Math.pow(52.0, curIndex); m++) {
+							allCards.add(tempCard);
+						}
+					}
+				}
 			}
+			System.out.println(allCards);
+			for (int j = 0; j < Math.pow(52.0, numOfJokers); j++) {
+				combinations.get(j).getHand().set(pos, allCards.get(i));
+
+				i++;
+				if (i == Math.pow(52.0, (curIndex + 1)))
+					i = 0;
+
+			}
+
 			++nextIndex;
-			--numOfJokers;
-		} while (numOfJokers > 0);
+			--numOfJokersCopy;
+		} while (numOfJokersCopy > 0);
 		// }
 		/*
 		 * int position = 0; for (Card card : hand) { if (card.getRank() ==
