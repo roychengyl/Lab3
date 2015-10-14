@@ -19,6 +19,13 @@ public class Card{
 		this.suit = s;
 	}
 	
+	/*
+	 * This constructor is for Jokers. Jokers have no suit.
+	 */
+	public Card(Rank r){
+		this.rank = r;
+	}
+	
 	// Testing method
 	public void setRank(Rank r){
 		this.rank = r;

@@ -49,7 +49,9 @@ public class Play {
 		System.out.println("How many decks do you want to have?");
 		// Error handling needs to be implemented in case the user enters a number 0 or below.
 		int numOfDecks = input.nextInt();
-		Deck deck = new Deck(numOfDecks);
+		System.out.println("How many Jokers do you want?");
+		int numOfJokers = input.nextInt();
+		Deck deck = new Deck(numOfDecks, numOfJokers);
 		
 		System.out.println("How many players are there?");
 		int numOfPlayers = input.nextInt();
