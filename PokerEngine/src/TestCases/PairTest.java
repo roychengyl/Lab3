@@ -29,7 +29,7 @@ public class PairTest {
 	
 	public static Card c20 = new Card(Rank.FOUR, Suit.CLUB);
 	public static Card c21 = new Card(Rank.FOUR, Suit.HEART);
-	public static Card c22 = new Card(Rank.SEVEN, Suit.CLUB);
+	public static Card c22 = new Card(Rank.SIX, Suit.CLUB);
 	public static Card c23 = new Card(Rank.EIGHT, Suit.CLUB);
 	public static Card c24 = new Card(Rank.TEN, Suit.CLUB);
 	public static Hand hand2 = new Hand(c20,c21,c22,c23,c24);
@@ -41,7 +41,7 @@ public class PairTest {
 	public static Card c44 = new Card(Rank.EIGHT, Suit.CLUB);
 	public static Hand hand4 = new Hand(c40,c41,c42,c43,c44);
 	
-	public static Card c30 = new Card(Rank.SIX, Suit.SPADE);
+	public static Card c30 = new Card(Rank.SEVEN, Suit.SPADE);
 	public static Card c31 = new Card(Rank.TWO, Suit.HEART);
 	public static Card c32 = new Card(Rank.TWO, Suit.DIAMOND);
 	public static Card c33 = new Card(Rank.EIGHT, Suit.HEART);

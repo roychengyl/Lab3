@@ -244,7 +244,6 @@ public enum HandType {
 	 *            the list will be obtained to set handType.
 	 */
 	public static void checkHand(Hand hand) {
-		List<HandType> possibleHands = new ArrayList<>();
 		// The highCard and lowCard are used to tell the difference between a
 		// straight flush and a royal flush
 		Rank highCard = (Rank) hand.getSortedVals().keySet().toArray()[hand.getSortedVals().size() - 1];
@@ -254,36 +253,22 @@ public enum HandType {
 		if (determineFlush(hand)) {
 			if (determineStraight(hand)) {
 				if (highCard == Rank.ACE && lowCard == Rank.TEN)
-					possibleHands.add(HandType.ROYAL_FLUSH);
+					hand.setHandType(HandType.ROYAL_FLUSH);
 				else
-					possibleHands.add(HandType.STRAIGHT_FLUSH);
+					hand.setHandType(HandType.STRAIGHT_FLUSH);
 			} else
-				possibleHands.add(HandType.FLUSH);
+				hand.setHandType(HandType.FLUSH);
 		} else if (determineStraight(hand)) {
-			possibleHands.add(HandType.STRAIGHT);
+			hand.setHandType(HandType.STRAIGHT);
 		} else {
+			int pairValue = determinePairs(hand);
 			for (HandType ht : HandType.values()) {
-				if (determinePairs(hand) == ht.pairValue)
-					possibleHands.add(ht);
+				if (pairValue == ht.pairValue)
+					hand.setHandType(ht);
 			}
 		}
-		/*
-		 * for (HandType ht : HandType.values()) { if (determineStraight(hand)
-		 * == ht.getStraightValue() && determineFlush(hand) ==
-		 * ht.getFlushValue() && determinePairs(hand) == ht.getPairValue()) { if
-		 * (ht != HandType.ROYAL_FLUSH && ht != HandType.STRAIGHT_FLUSH){
-		 * possibleHands.add(ht); } else { if (highCard == Rank.ACE && lowCard
-		 * == Rank.TEN) possibleHands.add(HandType.ROYAL_FLUSH); else{
-		 * possibleHands.add(HandType.STRAIGHT_FLUSH); } } } } }
-		 */
 
-		judgeHand(possibleHands);
-		HandType bestHandType;
-		// possibleHands.
-		// if (possibleHands.size() == 1) bestHandType = possibleHands.get(0);
-		bestHandType = possibleHands.get(possibleHands.size() - 1);
-		List<Rank> kickerPossibilities = determineKickerPossibilities(bestHandType, hand);
-		hand.setHandType(bestHandType);
+		List<Rank> kickerPossibilities = determineKickerPossibilities(hand.getHandType(), hand);
 		hand.setKickerPossibilities(kickerPossibilities);
 	}
 
@@ -366,36 +351,6 @@ public enum HandType {
 	// This method is used to determine the hand type of a SINGLE hand.
 	public static void judgeHand(List<HandType> handTypeArray) {
 		Collections.sort(handTypeArray);
-	}
-
-	public static void handleJokers(Hand hand) {
-		List<Hand> combinations = new ArrayList<Hand>();
-		ArrayList<Integer> positions = new ArrayList<Integer>();
-		int position = 0;
-		for (Card card : hand.getHand()) {
-			if (card.getRank() == Rank.JOKER){
-				position = hand.getHand().indexOf(card);
-				positions.add(position);
-			}
-		}
-		for (Integer i : positions){
-			for (Rank r : Rank.values()){
-				if (r != Rank.JOKER){
-					for (Suit s : Suit.values()){
-						Hand tempHand = new Hand();
-						for (Card car : hand.getHand()){
-							tempHand.addCard(car);
-						}
-						Card tempCard = new Card(r, s);
-						tempHand.getHand().set(i, tempCard);
-						combinations.add(tempHand);
-						
-					}
-				}
-			}
-		}
-
-		System.out.println(combinations);
 	}
 
 }

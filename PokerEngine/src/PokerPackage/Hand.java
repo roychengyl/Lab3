@@ -70,7 +70,7 @@ public class Hand {
 		this.hand.add(c3);
 		this.hand.add(c4);
 		this.hand.add(c5);
-		initSuitsAndSorted();
+		this.initSuitsAndSorted();
 
 		HandType.checkHand(this);
 	}
@@ -121,19 +121,25 @@ public class Hand {
 	 *         the frequency of a suit and a Rank for a Hand.
 	 */
 	public void initSuitsAndSorted() {
+		// The containers need to be cleared, otherwise the handleJokers method
+		// will improperly add values in the checking of ranks and suits/determining hand type
+		// for loop (in handleJokers()).
+		this.suitsInHand.clear();
+		this.sortedRankInHand.clear();
+		
 		for (Card c : this.hand) {
-			if (suitsInHand.containsKey(c.getSuit())) {
-				int curVal = suitsInHand.get(c.getSuit());
+			if (this.suitsInHand.containsKey(c.getSuit())) {
+				int curVal = this.suitsInHand.get(c.getSuit());
 				curVal += 1;
-				suitsInHand.put(c.getSuit(), curVal);
+				this.suitsInHand.put(c.getSuit(), curVal);
 			} else
-				suitsInHand.put(c.getSuit(), 1);
-			if (sortedRankInHand.containsKey(c.getRank())) {
-				int curVal = sortedRankInHand.get(c.getRank());
+				this.suitsInHand.put(c.getSuit(), 1);
+			if (this.sortedRankInHand.containsKey(c.getRank())) {
+				int curVal = this.sortedRankInHand.get(c.getRank());
 				curVal += 1;
-				sortedRankInHand.put(c.getRank(), curVal);
+				this.sortedRankInHand.put(c.getRank(), curVal);
 			} else
-				sortedRankInHand.put(c.getRank(), 1);
+				this.sortedRankInHand.put(c.getRank(), 1);
 		}
 	}
 
@@ -142,9 +148,7 @@ public class Hand {
 	}
 
 	public void handleJokers() {
-
 		ArrayList<Integer> positions = new ArrayList<Integer>();
-		// Hand tempHand = new Hand();
 		int numOfJokers = 0;
 		List<Card> allCards = new ArrayList<Card>();
 		for (Card c : hand) {
@@ -157,14 +161,11 @@ public class Hand {
 		for (int i = 0; i < Math.pow(52.0, numOfJokers); i++) {
 			Hand tempHand = new Hand();
 			for (Card c : hand) {
-				// if (c.getRank() != Rank.JOKER) {
 				tempHand.addCard(c);
-				// }
 			}
 			combinations.add(tempHand);
 		}
 
-		// if (numOfJokers > 0) {
 		int nextIndex = 0;
 		int numOfJokersCopy = numOfJokers;
 		do {
@@ -183,32 +184,32 @@ public class Hand {
 					}
 				}
 			}
-			System.out.println(allCards);
+			
+			
 			for (int j = 0; j < Math.pow(52.0, numOfJokers); j++) {
 				combinations.get(j).getHand().set(pos, allCards.get(i));
-
 				i++;
 				if (i == Math.pow(52.0, (curIndex + 1)))
 					i = 0;
 
 			}
-
+			
+			// Checking the ranks and suits in each hand...evaluating the hand
+			for (Hand h : combinations){
+				h.initSuitsAndSorted();
+				//System.out.println(h.getSortedVals() + "    " + h.getSuitsInHand());
+				HandType.checkHand(h);
+			}
 			++nextIndex;
 			--numOfJokersCopy;
 		} while (numOfJokersCopy > 0);
-		// }
-		/*
-		 * int position = 0; for (Card card : hand) { if (card.getRank() ==
-		 * Rank.JOKER) { //position = hand.indexOf(card); //break;
-		 * positions.add(position); } } for (Integer i : positions) { for (Rank
-		 * r : Rank.values()) { if (r != Rank.JOKER) { for (Suit s :
-		 * Suit.values()) { Hand tempHand = new Hand(); for (Card car : hand) {
-		 * tempHand.addCard(car); } Card tempCard = new Card(r, s);
-		 * tempHand.getHand().set(i, tempCard); combinations.add(tempHand); for
-		 * (Card c : tempHand.getHand()) { addCard(c); } for (Hand h :
-		 * combinations) { handleJokers(h); } } } } } //
-		 * System.out.println(combinations);
-		 */
+		
+		//ArrayList<Integer> pos = new ArrayList<Integer>();
+		//pos = HandType.judgeHands(combinations);
+	}
+	
+	public Hand getHandInCombos(int pos){
+		return this.combinations.get(pos);
 	}
 
 	public List<Hand> getCombos() {
