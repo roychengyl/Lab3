@@ -41,11 +41,18 @@ public class DeckTest {
 		Hand Player1Hand = new Hand(deck1);
 		Hand Player2Hand = new Hand(deck1);
 		Hand Player3Hand = new Hand(deck1);
+		Deck deck2 = new Deck(1, 2, 12);
+		Hand Player4Hand = new Hand(deck2);
+		Hand Player5Hand = new Hand(deck2);
+		Hand Player6Hand = new Hand(deck2);
 		System.out.println(deck1);
 		System.out.println(Player1Hand);
 		System.out.println(Player2Hand);
 		System.out.println(Player3Hand);
-		
+		System.out.println(deck2);
+		System.out.println(Player4Hand);
+		System.out.println(Player5Hand);
+		System.out.println(Player6Hand);
 		
 	}
 
